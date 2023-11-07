@@ -1,0 +1,33 @@
+* {
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+body {
+    padding: 0cm 1em;
+    display: block;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+@media(min-width:751px) {
+    #qr-view {
+        width: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+#qr-view {
+    margin: 1%;
+}
+
+.answer_button {
+    margin: 1%;
+}
