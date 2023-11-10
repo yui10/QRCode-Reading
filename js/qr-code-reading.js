@@ -1,8 +1,9 @@
-const TEXT_LIST = [
-  "Apple", "Microsoft", "	Amazon.com", "NVIDIA", "Alphabet A",
+let TEXT_LIST = [
+  "Apple", "Microsoft", "Amazon.com", "NVIDIA", "Alphabet A",
   "Alphabet C", "Meta Platforms A", "Tesla", "Eli Lilly", "UnitedHealth Group"
 ]
 
+/** QRコードの編集モード */
 const EditMode = {
   FinderPattern: Symbol("FinderPattern"),
   TimingPattern: Symbol("TimingPattern"),
@@ -11,6 +12,7 @@ const EditMode = {
   VersionInformation: Symbol("VersionInformation"),
 };
 
+/** QRコードのバージョンとサイズの対応表 */
 const QRCodeVersion = [-1,
   21, 25, 29, 33, 37,
   41, 45, 49, 53, 57,
@@ -22,12 +24,18 @@ const QRCodeVersion = [-1,
   161, 165, 169, 173, 177]
 
 
+/** 各編集に使用される色コード */
 const QRCodeColor = {
   Normal: ["rgb(255, 255, 255)", "rgb(0, 0, 0)"],
   FormatInformation: ["rgb(255, 249, 232)", "rgb(252, 205, 15)"],
   TimingPattern: ["rgb(68, 147, 249)", "rgb(236, 244, 255)"],
   VersionInformation: ["rgb(121, 255, 0)", "rgb(195, 255, 154)"],
 
+  /**
+   * Key:引数の色コード, Value:変更後の色コードの連想配列を作成する
+   * @param {array} color
+   * @returns 
+   */
   Create_Profile: (color) => {
     let color_profile = {};
     QRCodeColor.Normal.forEach((key, i) => color_profile[key] = color[i])
@@ -42,13 +50,22 @@ const QRCodeGame = (UI, QRCode_id_name) => {
 
   let QRCode_table = [], QRCode_table_mask = [];
 
+  /**
+   * QRコードの描画をクリアする
+   */
   function clearQRcode() {
     UI.$QRCode.empty();
     UI.$QRCodeMask.empty();
   };
 
+  /**
+   * QRコードを生成し、編集を行う
+   * @param {string} text 
+   * @param {number} size 
+   */
   function createQRcode(text, size) {
     clearQRcode();
+    // QRコードの描画
     UI.$QRCode.qrcode({
       text: text,
       render: "table",
@@ -57,19 +74,24 @@ const QRCodeGame = (UI, QRCode_id_name) => {
       // correctLevel: QRErrorCorrectLevel.H,
     });
 
+    // QRコードの編集後キャッシュがない場合は作成する
     if (QRCode_table.length == 0) {
       QRCode_table = loadTable();
+      // ファインダーパターンを塗りつぶす
       QRCode_table = editHeaderQRcode(QRCode_table, [EditMode.FinderPattern]);
+      // マスク処理などの編集を行ったQRコードを生成
       QRCode_table_mask = JSON.parse(JSON.stringify(QRCode_table));
       QRCode_table_mask = editHeaderQRcode(QRCode_table_mask, [EditMode.TimingPattern, EditMode.Information, EditMode.VersionInformation, EditMode.Mask]);
     }
 
+    // ファインダーパターンを塗りつぶしたQRコードの描画
     QRCode_table.forEach(function (row, i) {
       row.forEach(function (color, j) {
         UI.$QRCode.find('tr').eq(i).children('td').eq(j).css("background-color", color);
       });
     });
 
+    // マスク処理などの編集を行ったQRコードの描画
     UI.$QRCodeMask.append(UI.$QRCode.children('table').clone());
     QRCode_table_mask.forEach(function (row, i) {
       row.forEach(function (color, j) {
@@ -79,6 +101,11 @@ const QRCodeGame = (UI, QRCode_id_name) => {
   }
 
 
+  /**
+   * QRコードのフォーマット情報を取得
+   * @param {array} table 
+   * @returns {any} {ErrorCorrectionLevel, MaskPattern, ErrorCorrectionCode}を返す
+   */
   function GetFormatInformation(table) {
     let formatBinary = 0;
     for (let i = 1; i <= 7; i++) {
@@ -103,7 +130,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
    * 指定サイズのマスクパターンを生成
    * @param {number} size 
    * @param {number} mask_pattern 
-   * @returns boolean[size][size]
+   * @returns {array[]}マスクパターンに対応した boolean[size][size] を返す
    */
   function createMaskPattern(size, mask_pattern) {
     function calcMaskPattern(y, x, mask_pattern) {
@@ -119,7 +146,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
         default: return false;
       }
     }
-
+    // マスクパターンの生成
     let MaskPatternArray = Array(size).fill().map(() => Array(size).fill(false));
     for (let i = 0; i < MaskPatternArray.length; i++) {
       for (let j = 0; j < MaskPatternArray[0].length; j++) {
@@ -127,6 +154,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
       }
     }
 
+    // 各種情報部をfalseにする
     MaskPatternArray = fillFinderPattern(MaskPatternArray, false);
     MaskPatternArray = fillTimingPattern(MaskPatternArray, [false, false]);
     MaskPatternArray = fillInformation(MaskPatternArray, { true: false, false: false });
@@ -155,6 +183,12 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return table;
   }
 
+  /**
+   * タイミングパターン部を塗る
+   * @param {array} table 
+   * @param {array} fill_item 黒;true, 白:falseの場合[true, false]となる
+   * @returns 
+   */
   function fillTimingPattern(table, fill_item = [true, false]) {
     for (let i = 0; i < table.length - 8 * 2; i++) {
       table[i + 8][6] = table[6][i + 8] = fill_item[i % 2];
@@ -162,6 +196,12 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return table;
   }
 
+  /**
+   *  フォーマット情報部を塗る
+   * @param {array} table 
+   * @param {array} filled_item 
+   * @returns 
+   */
   function fillInformation(table, filled_item = { true: true, false: false }) {
     for (let i = 0; i < 9; i++) {
       table[i][8] = KeyTransValue(table[i][8], filled_item);
@@ -175,6 +215,13 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return table;
   }
 
+  /**
+   * バージョン情報部を塗る
+   * @param {array} table 
+   * @param {number} version QRコードのバージョン
+   * @param {array} convert_item KeyをValueに変化するための連想配列
+   * @returns 
+   */
   function fillVersionInformation(table, version, convert_item = { true: true, false: false }) {
     if (version < 7) return table;
 
@@ -187,6 +234,12 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return table;
   }
 
+  /**
+   * 連想配列からkeyの値を取得する。みつからない場合はkeyをそのまま返す。
+   * @param {any} key 検索するキー
+   * @param {array} hash 連想配列
+   * @returns {any} keyに対応する値を返す。みつからない場合はkeyをそのまま返す。
+   */
   function KeyTransValue(key, hash) {
     if (key in hash)
       return hash[key];
@@ -196,7 +249,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
   /**
    * QRコードのヘッダ部の編集を行う
    * @param {array} QRCode_table 
-   * @param {array:EditMode} fillFlag
+   * @param {array} fillFlag EditModeを指定する配列
    * @returns 
    */
   function editHeaderQRcode(QRCode_table, fillFlag = [EditMode.FinderPattern]) {
@@ -242,10 +295,17 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return QRCode_table;
   }
 
+  /**
+   * QRコードの描画を再度行う.正解のテキストは同じだが、サイズは変更される.
+   */
   function reViewQRcode() {
     createQRcode(_correctText, UI.$QRCodeSize.val());
   }
 
+  /**
+   * HTMLで描画されたQRコードの色情報を取得する
+   * @returns {array} QRコードの色情報を返す
+   */
   function loadTable() {
     let table = [];
     UI.$QRCode.find('tr').each(function () {
@@ -258,10 +318,15 @@ const QRCodeGame = (UI, QRCode_id_name) => {
     return table;
   }
 
+  /**
+   * 選択肢のボタンを作成する
+   * @param {string} correctText 正解のテキスト
+   */
   function setSelectButton(correctText) {
     UI.$QRCodeAnswerSelect.empty();
     UI.$QRCodeAnswerButton.prop("disabled", false);
 
+    // 選択肢をランダムで選択
     let setText = [correctText];
     for (i = 0; i < 4; i++) {
       let text = TEXT_LIST[Math.floor(Math.random() * TEXT_LIST.length)];
@@ -271,6 +336,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
       setText.push(text);
     }
 
+    // 選択肢をシャッフル
     for (let i = 0; i < 3; i++) {
       setText = shuffleArray(setText);
     }
