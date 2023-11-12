@@ -350,6 +350,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
   function Init() {
     _correctText = TEXT_LIST[Math.floor(Math.random() * TEXT_LIST.length)];
     let size = UI.$QRCodeSize.val();
+    QRCode_table = [], QRCode_table_mask = [];
     createQRcode(_correctText, size);
     setSelectButton(_correctText);
   }
