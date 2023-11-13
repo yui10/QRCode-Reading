@@ -368,7 +368,23 @@ const UI = {
 };
 
 let game = QRCodeGame(UI, "#op-qrcode");
-game.Init();
+const one_day = 1000 * 60 * 60 * 24;
+let timer = Timer(1000, () => {
+  let time = new Date(timer.Time());
+  if (time > one_day) {
+    timer.Stop();
+    alert("時間切れです\nTime is up.");
+    GameStart();
+  }
+  $('.timer').text(time.toISOString().slice(11, 19));
+});
+
+function GameStart() {
+  game.Init();
+  $('.timer').text("00:00:00");
+  timer.ReStart();
+}
+GameStart();
 
 function shuffleArray(array) {
   const cloneArray = [...array]
@@ -393,5 +409,5 @@ UI.$QRCodeAnswer.on('click', '#guess_button', async function () {
   $(this).prop("disabled", true);
   answer == game.correctText() ? alert("正解!\nThat is correct!") : alert("不正解\nThat is not correct." + game.correctText());
   await sleep(1000);
-  game.Init();
+  GameStart();
 });
