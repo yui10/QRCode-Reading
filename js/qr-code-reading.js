@@ -408,7 +408,9 @@ UI.$QRCodeAnswer.on('click', '#guess_button', async function () {
   let answer = $('input:radio[name="answer_button"]:checked').val();
   if (answer == undefined) return;
   $(this).prop("disabled", true);
-  answer == game.correctText() ? alert("正解!\nThat is correct!") : alert("不正解\nThat is not correct." + game.correctText());
+  timer.Stop();
+  let time = new Date(timer.Time()).toISOString().slice(11, 19);
+  answer == game.correctText() ? alert(`正解!\nThat is correct!\nClear Time : ${time}`) : alert(`不正解\nThat is not correct. ${game.correctText()}`);
   await sleep(1000);
   GameStart();
 });
