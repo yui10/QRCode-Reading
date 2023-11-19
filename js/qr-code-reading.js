@@ -65,6 +65,7 @@ const QRCodeGame = (UI, QRCode_id_name) => {
    */
   function createQRcode(text, size) {
     clearQRcode();
+    text = Encoding.convert(text, 'sjis');
     // QRコードの描画
     UI.$QRCode.qrcode({
       text: text,
