@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="h-100">
 
 <head>
   <meta charset="utf-8">
@@ -24,41 +24,48 @@
     defer></script>
 </head>
 
-<body>
-  <main class="container">
-    <div class="row">
-      <h1>QRCodeReading</h1>
-      <h2 class="timer">00:00:00</h2>
-    </div>
-    <div class="qr-input row">
-      <div class="option">
-        <select id="qr-size"></select>
+<body class="d-flex flex-column h-100">
+  <main class="flex-shrink-0">
+    <div class="container">
+      <div class="row">
+        <h1>QRCodeReading</h1>
+        <h2 class="timer">00:00:00</h2>
       </div>
-    </div>
-    <div id="qr-view" class="row">
-      <div class="col">
-        <div id="op-qrcode"></div>
-        <p>QRコード</p>
+      <div class="qr-input row">
+        <div class="option">
+          <select id="qr-size"></select>
+        </div>
       </div>
-      <div class="col">
-        <div class="" id="op-qrcode-mask"></div>
-        <p>マスク処理後</p>
+      <div id="qr-view" class="row">
+        <div class="col">
+          <div id="op-qrcode"></div>
+          <p>QRコード</p>
+        </div>
+        <div class="col">
+          <div class="" id="op-qrcode-mask"></div>
+          <p>マスク処理後</p>
+        </div>
       </div>
-    </div>
-    <div id="qr-answer" class="row">
-      <p>Answer</p>
-      <div id="qr-answer-select" data-toggle="buttons" class=" btn-group-toggle d-grid  mx-auto d-md-block">
+      <div id="qr-answer" class="row">
+        <p>Answer</p>
+        <div id="qr-answer-select" data-toggle="buttons" class=" btn-group-toggle d-grid  mx-auto d-md-block">
+        </div>
+        <button type="button" class="btn btn-primary btn-lg" id="guess_button">Guess</button>
       </div>
-      <button type="button" class="btn btn-primary btn-lg" id="guess_button">Guess</button>
     </div>
   </main>
 
-  <footer>
-    <a href="">
-      <img src="./img/github-mark.svg" width="20px" alt="GitHub">
-      FAQ & Help
-    </a>
-    <p>&copy; 2023 <a href="https://github.com/yui10">yui10</a></p>
+  <footer class="footer mt-auto py-3 bg-body-tertiary">
+    <div class="container">
+      <ul class="row">
+        <li class="col-md-6"> <a href="./">Home</a> </li>
+        <li class="col-md-6">
+          <a href="https://github.com/yui10/QRCode-Reading">
+            <img src="./img/github-mark.svg" width="20px" alt="GitHub"> FAQ & Help </a>
+        </li>
+      </ul>
+      <p>&copy; 2023 <a href="https://github.com/yui10">yui10</a></p>
+    </div>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
