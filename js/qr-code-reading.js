@@ -385,7 +385,21 @@ function GameStart() {
   $('.timer').text("00:00:00");
   timer.ReStart();
 }
-GameStart();
+
+let country = country_code().fetchCountryList(LANG.JA);
+const fetchFunction = () => {
+  if (Object.keys(country).length == 0)
+    setTimeout(fetchFunction, 500);
+  else {
+    TEXT_LIST = []
+    for (let i = 0; i < Object.keys(country).length; i++) {
+      TEXT_LIST.push(country[i]["name"])
+    }
+
+    GameStart();
+  }
+};
+setTimeout(fetchFunction, 1000);
 
 function shuffleArray(array) {
   const cloneArray = [...array]
