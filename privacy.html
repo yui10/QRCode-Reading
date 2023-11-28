@@ -38,29 +38,15 @@
   <main class="flex-shrink-0">
     <div class="container">
       <div class="row">
-        <h1>QRCodeReading</h1>
-        <h2 class="timer">00:00:00</h2>
-      </div>
-      <div class="qr-input row">
-        <div class="option">
-          <select id="qr-size"></select>
-        </div>
-      </div>
-      <div id="qr-view" class="row">
-        <div class="col">
-          <div id="op-qrcode"></div>
-          <p>QRコード</p>
-        </div>
-        <div class="col">
-          <div class="" id="op-qrcode-mask"></div>
-          <p>マスク処理後</p>
-        </div>
-      </div>
-      <div id="qr-answer" class="row">
-        <p>Answer</p>
-        <div id="qr-answer-select" data-toggle="buttons" class=" btn-group-toggle d-grid  mx-auto d-md-block">
-        </div>
-        <button type="button" class="btn btn-primary btn-lg" id="guess_button">Guess</button>
+        <h1>プライバシーポリシー</h1>
+        <h2>当サイトが使用しているアクセス解析ツールについて</h2>
+        <p>
+          当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を使用しています。このGoogleアナリティクスはデータの収集のためにCookieを使用しています。このデータは匿名で収集されており、個人を特定するものではありません。
+
+          この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。この規約に関しての詳細は<a
+            href="https://marketingplatform.google.com/about/analytics/terms/jp/">Googleアナリティクスサービス利用規約</a>のページや<a
+            href="https://policies.google.com/technologies/ads?hl=ja">Googleポリシーと規約ページ</a>をご覧ください。
+        </p>
       </div>
     </div>
   </main>
@@ -81,29 +67,6 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/encoding-japanese/2.0.0/encoding.min.js"
-    integrity="sha512-AhAMtLXTbhq+dyODjwnLcSlytykROxgUhR+gDZmRavVCNj6Gjta5l+8TqGAyLZiNsvJhh3J83ElyhU+5dS2OZw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="text/javascript" src="./vendor/jquery-qrcode/jquery.qrcode.min.js" charset="utf-8"></script>
-
-  <script>
-    function Display() {
-      let windowWidth = window.innerWidth;
-      const qrSize = $("#qr-size");
-      let size_list = [200, 350, 500, 650];
-      if (windowWidth < 767) {
-        size_list = [100, 200, 300, 400];
-      }
-
-      qrSize.empty();
-      for (let i = 0; i < size_list.length; i++)
-        qrSize.append(`<option value="${size_list[i]}">${size_list[i]}px</option>`);
-    }
-    Display()
-  </script>
-  <script type="text/javascript" src="./js/timer.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/country-code.js" charset="utf-8"></script>
-  <script type="text/javascript" src="./js/qr-code-reading.js" charset="utf-8"></script>
 </body>
 
 </html>
